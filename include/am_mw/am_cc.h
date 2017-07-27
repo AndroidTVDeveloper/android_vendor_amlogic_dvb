@@ -61,6 +61,7 @@ typedef void (*AM_CC_VBIProgInfoCb_t)(AM_CC_Handle_t handle, vbi_program_info *p
 /**VBI network callback.*/
 typedef void (*AM_CC_VBINetworkCb_t)(AM_CC_Handle_t handle, vbi_network *n);
 typedef void (*AM_CC_VBIRatingCb_t)(AM_CC_Handle_t handle, vbi_rating *rating);
+typedef void (*AM_CC_VBINoDataCb_t) (AM_CC_Handle_t handle);
 
 
 typedef enum {
@@ -215,6 +216,7 @@ typedef struct
 	AM_CC_VBIProgInfoCb_t pinfo_cb;    /**< VBI program information callback.*/
 	AM_CC_VBINetworkCb_t  network_cb;  /**< VBI network callback.*/
 	AM_CC_VBIRatingCb_t	rating_cb;		/**< VBI rating callback.*/
+	AM_CC_VBINoDataCb_t	nodata_cb;		/**< VBI No Line_284 data callback.*/
 }AM_CC_CreatePara_t;
 
 /**\brief Close caption parser start parameter*/
