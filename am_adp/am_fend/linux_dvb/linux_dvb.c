@@ -149,9 +149,6 @@ static AM_ErrorCode_t dvb_set_mode (AM_FEND_Device_t *dev, int mode)
 	int fd = (long)dev->drv_data;
 	int ret;
 
-	if(mode < 0)
-		return AM_SUCCESS;
-
 	ret = ioctl(fd, FE_SET_MODE, mode);
 	if(ret != 0){
 		AM_DEBUG(1, "set mode %d failed (%d)\n", mode, errno);

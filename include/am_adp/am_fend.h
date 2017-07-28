@@ -98,7 +98,8 @@ enum AM_FEND_EventType
 typedef struct
 {
 	int mode;
-	#define FE_AUTO (-1)
+	#define FE_AUTO (-1)    /**< Do not care the mode*/
+	#define FE_UNKNOWN (-2) /**< Set mode to unknown, something like reset*/
 } AM_FEND_OpenPara_t;
 
 /**\brief frontend callback function*/

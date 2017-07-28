@@ -628,17 +628,18 @@ AM_ErrorCode_t AM_FEND_Close(int dev_no)
 		int err = 0;
 
 		dev->enable_cb = AM_FALSE;
-	
 		/*Stop the thread*/
 		dev->enable_thread = AM_FALSE;
 		err = pthread_kill(dev->thread, SIGALRM);
 		if (err != 0)
 			AM_DEBUG(1, "kill fail, err:%d", err);
 		pthread_join(dev->thread, NULL);
-	
 		/*Release the device*/
 		if(dev->drv->close)
 		{
+			if (dev->drv->set_mode)
+				dev->drv->set_mode(dev, FE_UNKNOWN);
+
 			dev->drv->close(dev);
 		}
 	
@@ -665,7 +666,7 @@ AM_ErrorCode_t AM_FEND_SetMode(int dev_no, int mode)
 	AM_ErrorCode_t ret = AM_SUCCESS;
 	
 	AM_TRY(fend_get_openned_dev(dev_no, &dev));
-	
+	AM_DEBUG(1, "AM_FEND_SetMode %d", mode);
 	if(!dev->drv->set_mode)
 	{
 		AM_DEBUG(1, "fronend %d no not support set_mode", dev_no);
