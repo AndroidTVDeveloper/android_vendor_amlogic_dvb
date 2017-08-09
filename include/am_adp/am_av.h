@@ -363,8 +363,10 @@ typedef struct
 	AM_AV_AFormat_t  aud_fmt;     /**< Audio format*/
 	AM_AV_VFormat_t  vid_fmt;     /**< Video format*/
 	AM_AV_PFormat_t  pkg_fmt;     /**< Package format*/
+	int              sub_type;    /**< Subtitle type.*/
 	int              aud_id;      /**< Audio ID, -1 means no audio data*/
 	int              vid_id;      /**< Video ID, -1 means no video data*/
+	int              sub_id;      /**< Subtitle ID, -i means no subtitle data*/
 	int              channel;     /**< Audio channel number (used in playing audio PCM data)*/
 	int              sample_rate; /**< Audio sample rate (used in playing audio PCM data)*/
 	int              data_width;  /**< Audio data width (used in playing audio PCM data)*/
@@ -791,6 +793,15 @@ extern AM_ErrorCode_t AM_AV_SetInjectVideo(int dev_no, int vid, AM_AV_VFormat_t 
  * \return Error code
  */
 extern AM_ErrorCode_t AM_AV_SetInjectAudio(int dev_no, int aid, AM_AV_AFormat_t afmt);
+
+/**\brief In injection mode, change the subtitle
+ * \param dev_no AV decoder device number
+ * \param sid Subtitle's PID
+ * \param stype The subtitle's type.
+ * \retval AM_SUCCESS On success
+ * \return Error code
+ */
+extern AM_ErrorCode_t AM_AV_SetInjectSubtitle(int dev_no, int sid, int stype);
 
 /**\brief Stop the injection mode
  * \param dev_no AV decoder device number

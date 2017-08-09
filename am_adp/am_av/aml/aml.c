@@ -269,11 +269,15 @@ typedef struct
 /**\brief 数据注入播放模式相关数据*/
 typedef struct
 {
+	AM_AV_AFormat_t    aud_fmt;
+	AM_AV_VFormat_t    vid_fmt;
+	int                sub_type;
 	AM_AV_PFormat_t    pkg_fmt;
 	int                aud_fd;
 	int                vid_fd;
 	int                aud_id;
 	int                vid_id;
+	int                sub_id;
 	int                cntl_fd;
 	void              *adec;
 	AM_AD_Handle_t ad;
@@ -401,6 +405,8 @@ static AM_ErrorCode_t aml_switch_ts_audio(AM_AV_Device_t *dev, uint16_t apid, AM
 static AM_ErrorCode_t aml_reset_audio_decoder(AM_AV_Device_t *dev);
 static AM_ErrorCode_t aml_set_drm_mode(AM_AV_Device_t *dev, int enable);
 static AM_ErrorCode_t aml_set_audio_ad(AM_AV_Device_t *dev, int enable, uint16_t apid, AM_AV_AFormat_t afmt);
+static AM_ErrorCode_t aml_set_inject_audio(AM_AV_Device_t *dev, uint16_t apid, AM_AV_AFormat_t afmt);
+static AM_ErrorCode_t aml_set_inject_subtitle(AM_AV_Device_t *dev, uint16_t spid, int stype);
 
 const AM_AV_Driver_t aml_av_drv =
 {
@@ -427,6 +433,8 @@ const AM_AV_Driver_t aml_av_drv =
 .reset_audio_decoder = aml_reset_audio_decoder,
 .set_drm_mode = aml_set_drm_mode,
 .set_audio_ad = aml_set_audio_ad,
+.set_inject_audio = aml_set_inject_audio,
+.set_inject_subtitle = aml_set_inject_subtitle
 };
 
 /*音频控制（通过解码器）操作*/
@@ -1384,6 +1392,21 @@ static AM_ErrorCode_t aml_start_inject(AV_InjectData_t *inj, AV_InjectPlayPara_t
 		}
 	}
 
+	if (para->sub_id && (para->sub_id<0x1fff))
+	{
+		if (ioctl(vfd, AMSTREAM_IOC_SID, para->sub_id) == -1)
+		{
+			AM_DEBUG(1, "set subtitle PID failed");
+			return AM_AV_ERR_SYS;
+		}
+
+		if (ioctl(vfd, AMSTREAM_IOC_SUB_TYPE, para->sub_type) == -1)
+		{
+			AM_DEBUG(1, "set subtitle type failed");
+			return AM_AV_ERR_SYS;
+		}
+	}
+
 	if (vfd != -1)
 	{
 		if (ioctl(vfd, AMSTREAM_IOC_PORT_INIT, 0) == -1)
@@ -1415,8 +1438,12 @@ static AM_ErrorCode_t aml_start_inject(AV_InjectData_t *inj, AV_InjectPlayPara_t
 		adec_start_decode(afd, para->aud_fmt, has_video, &inj->adec);
 	}
 
-	inj->aud_id = para->aud_id;
-	inj->vid_id = para->vid_id;
+	inj->aud_fmt  = para->aud_fmt;
+	inj->vid_fmt  = para->vid_fmt;
+	inj->sub_type = para->sub_type;
+	inj->aud_id   = para->aud_id;
+	inj->vid_id   = para->vid_id;
+	inj->sub_id   = para->sub_id;
 
 	return AM_SUCCESS;
 }
@@ -6091,6 +6118,89 @@ static AM_ErrorCode_t aml_set_drm_mode(AM_AV_Device_t *dev, int enable)
 	return AM_SUCCESS;
 }
 
+AM_ErrorCode_t aml_set_inject_audio(AM_AV_Device_t *dev, uint16_t apid, AM_AV_AFormat_t afmt)
+{
+	AV_InjectData_t *data;
+	AM_Bool_t audio_valid, video_valid;
+	int fd;
+	AM_Bool_t has_video = VALID_VIDEO(dev->ts_player.play_para.vpid, dev->ts_player.play_para.vfmt);
+
+	data = (AV_InjectData_t *)dev->inject_player.drv_data;
+
+	fd = (data->aud_fd == -1) ? data->vid_fd : data->aud_fd;
+
+	if (data->aud_id != -1) {
+		adec_stop_decode(&data->adec);
+		data->aud_id = -1;
+	}
+
+	if (apid && (apid<0x1fff)) {
+		if (ioctl(fd, AMSTREAM_IOC_AFORMAT, (int)afmt) == -1)
+		{
+			AM_DEBUG(1, "set audio format failed");
+			return AM_AV_ERR_SYS;
+		}
+
+		if (ioctl(fd, AMSTREAM_IOC_AID, (int)apid) == -1)
+		{
+			AM_DEBUG(1, "set audio PID failed");
+			return AM_AV_ERR_SYS;
+		}
+	}
+
+	/*reset audio*/
+	if (ioctl(fd, AMSTREAM_IOC_AUDIO_RESET, 0) == -1)
+	{
+		AM_DEBUG(1, "audio reset failed");
+		return AM_AV_ERR_SYS;
+	}
+
+	/*Start audio decoder*/
+	if (apid && (apid<0x1fff))
+	{
+		adec_start_decode(fd, afmt, has_video, &data->adec);
+	}
+
+	data->aud_id  = apid;
+	data->aud_fmt = afmt;
+
+	return AM_SUCCESS;
+}
+
+AM_ErrorCode_t aml_set_inject_subtitle(AM_AV_Device_t *dev, uint16_t spid, int stype)
+{
+	AV_InjectData_t *data;
+	int fd;
+
+	data = (AV_InjectData_t *)dev->inject_player.drv_data;
+
+	fd = (data->aud_fd == -1) ? data->vid_fd : data->aud_fd;
+
+	if (spid && (spid<0x1fff)) {
+		if (ioctl(fd, AMSTREAM_IOC_SID, spid) == -1)
+		{
+			AM_DEBUG(1, "set subtitle PID failed");
+			return AM_AV_ERR_SYS;
+		}
+
+		if (ioctl(fd, AMSTREAM_IOC_SUB_TYPE, stype) == -1)
+		{
+			AM_DEBUG(1, "set subtitle type failed");
+			return AM_AV_ERR_SYS;
+		}
+
+		if (ioctl(fd, AMSTREAM_IOC_SUB_RESET) == -1)
+		{
+			AM_DEBUG(1, "reset subtitle failed");
+			return AM_AV_ERR_SYS;
+		}
+	}
+
+	data->sub_id   = spid;
+	data->sub_type = stype;
+
+	return AM_SUCCESS;
+}
 
 static void ad_callback(const uint8_t * data,int len,void * user_data)
 {

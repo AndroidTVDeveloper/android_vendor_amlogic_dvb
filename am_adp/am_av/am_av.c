@@ -2941,6 +2941,40 @@ AM_ErrorCode_t AM_AV_SetVdecErrorRecoveryMode(int dev_no, uint8_t error_recovery
 	return ret;
 }
 
+AM_ErrorCode_t AM_AV_SetInjectAudio(int dev_no, int aid, AM_AV_AFormat_t afmt)
+{
+	AM_AV_Device_t *dev;
+	AM_ErrorCode_t ret = AM_SUCCESS;
+
+	AM_TRY(av_get_openned_dev(dev_no, &dev));
+
+	pthread_mutex_lock(&dev->lock);
+
+	if ((dev->mode & AV_INJECT) && dev->drv->set_inject_audio)
+		ret = dev->drv->set_inject_audio(dev, aid, afmt);
+
+	pthread_mutex_unlock(&dev->lock);
+
+	return ret;
+}
+
+AM_ErrorCode_t AM_AV_SetInjectSubtitle(int dev_no, int sid, int stype)
+{
+	AM_AV_Device_t *dev;
+	AM_ErrorCode_t ret = AM_SUCCESS;
+
+	AM_TRY(av_get_openned_dev(dev_no, &dev));
+
+	pthread_mutex_lock(&dev->lock);
+
+	if ((dev->mode & AV_INJECT) && dev->drv->set_inject_subtitle)
+		ret = dev->drv->set_inject_subtitle(dev, sid, stype);
+
+	pthread_mutex_unlock(&dev->lock);
+
+	return ret;
+}
+
 AM_ErrorCode_t AM_AV_SetAudioAd(int dev_no, int enable, uint16_t apid, AM_AV_AFormat_t afmt)
 {
 	AM_AV_Device_t *dev;

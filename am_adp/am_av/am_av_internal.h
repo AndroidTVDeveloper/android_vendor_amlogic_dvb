@@ -225,6 +225,8 @@ struct AM_AV_Driver
 	AM_ErrorCode_t (*reset_audio_decoder)(AM_AV_Device_t *dev);
 	AM_ErrorCode_t (*set_drm_mode)(AM_AV_Device_t *dev, int enable);
 	AM_ErrorCode_t (*set_audio_ad)(AM_AV_Device_t *dev, int enable, uint16_t apid, AM_AV_AFormat_t afmt);
+	AM_ErrorCode_t (*set_inject_audio)(AM_AV_Device_t *dev, uint16_t apid, AM_AV_AFormat_t afmt);
+	AM_ErrorCode_t (*set_inject_subtitle)(AM_AV_Device_t *dev, uint16_t spid, int stype);
 };
 
 /**\brief 音视频播放参数*/
