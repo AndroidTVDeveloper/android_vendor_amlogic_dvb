@@ -163,6 +163,8 @@ void *adec_handle = NULL;
 #define DEC_CONTROL_H264 "/sys/module/amvdec_h264/parameters/dec_control"
 #define DEC_CONTROL_MPEG12 "/sys/module/amvdec_mpeg12/parameters/dec_control"
 #define VIDEO_NEW_FRAME_COUNT_FILE "/sys/module/amvideo/parameters/new_frame_count"
+#define VIDEO_NEW_FRAME_TOGGLED_FILE "/sys/module/amvideo/parameters/first_frame_toggled"
+
 
 #define AUDIO_DSP_DIGITAL_RAW_FILE "/sys/class/audiodsp/digital_raw"
 
@@ -4337,10 +4339,10 @@ static void* aml_av_monitor_thread(void *arg)
 		//check video frame available
 
 		if (has_video) {
-			if (AM_FileRead(VIDEO_NEW_FRAME_COUNT_FILE, buf, sizeof(buf)) >= 0) {
+			if (AM_FileRead(VIDEO_NEW_FRAME_TOGGLED_FILE, buf, sizeof(buf)) >= 0) {
 				sscanf(buf, "%i", &vframes_now);
 
-				if ((vframes_now >= VIDEO_AVAILABLE_MIN_CNT) && (vframes_now > vframes_last)) {
+				if ((vframes_now >= 1) ) {
 					if (no_video) {
 						AM_DEBUG(1, "video available");
 						AM_EVT_Signal(dev->dev_no, AM_AV_EVT_VIDEO_AVAILABLE, NULL);
@@ -4352,7 +4354,7 @@ static void* aml_av_monitor_thread(void *arg)
 
 				vframes_last = vframes_now;
 			} else {
-				AM_DEBUG(1, "cannot read \"%s\"", VIDEO_NEW_FRAME_COUNT_FILE);
+				AM_DEBUG(1, "cannot read \"%s\"", VIDEO_NEW_FRAME_TOGGLED_FILE);
 				vframes_now = 0;
 			}
 		}
