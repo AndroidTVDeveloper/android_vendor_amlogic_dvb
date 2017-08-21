@@ -700,7 +700,7 @@ struct dvbsx_blindscanevent {
 	union {
 		__u16 m_uiprogress;							/* The percentage completion of the blind scan procedure. A value of 100 indicates that the blind scan is finished. */
 		__u32 m_uistartfreq_khz;					/* The start scan frequency in units of kHz. The minimum value depends on the tuner specification. */
-		struct dvb_frontend_parameters parameters;	/* Blind scan channel info. */
+		struct dvb_frontend_parameters_ex parameters;	/* Blind scan channel info. */
 	} u;
 };
 
