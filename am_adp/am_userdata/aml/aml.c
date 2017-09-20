@@ -704,6 +704,7 @@ static void *aml_userdata_thread(void *arg)
 	int first_check = 0;
 	userdata_poc_info_t poc_block;
 	int flush = 0;
+	int last_pic_type, last_tmp_ref = -1;
 
     AM_DEBUG(1, "user data thread start.");
 
@@ -765,10 +766,18 @@ static void *aml_userdata_thread(void *arg)
 							reorder.picture_coding_type = pheader.picture_coding_type;
 							reorder.picture_structure = pheader.picture_structure;
 							reorder.picture_temporal_reference = pheader.temporal_reference;
-
-							aml_reorder_user_data(&reorder, cc_data, cc_data_cnt);
-
-							last_pkg_idx = pheader.index;
+							if(pheader.picture_coding_type == last_pic_type &&
+									pheader.temporal_reference == last_tmp_ref)
+							{
+								AM_DEBUG(1, "drop same context userdata package");
+							}
+							else
+							{
+								aml_reorder_user_data(&reorder, cc_data, cc_data_cnt);
+								last_pkg_idx = pheader.index;
+								last_pic_type = pheader.picture_coding_type;
+								last_tmp_ref = pheader.temporal_reference;
+							}
 						}
 
 						if (left < cnt && left > 0)

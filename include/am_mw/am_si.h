@@ -190,12 +190,6 @@ extern "C"
 /**\brief Maximum number of single Program supported caption*/
 #define AM_SI_MAX_CAP_CNT 32
 
-/**\brief Maximum number of  service name languages*/
-#define AM_SI_MAX_SRV_NAME_LANG 4
-
-/**\brief Maximum service name length*/
-#define AM_SI_MAX_SRV_NAME_LEN 64
-
 #define SECS_BETWEEN_1JAN1970_6JAN1980 (315964800)
 
 /****************************************************************************
@@ -292,26 +286,6 @@ typedef struct
 		char lang[16];		/**<the language of caption for digital*/
 	}captions[AM_SI_MAX_CAP_CNT];/**<caption info*/
 }AM_SI_CaptionInfo_t;
-
-/**\brief service info*/
-typedef struct
-{
-	uint8_t srv_type, eit_sche, eit_pf, rs, free_ca, access_controlled, hidden, hide_guide, plp_id;
-	int vid, aid1, aid2, srv_id, pmt_pid, pcr_pid;
-	int vfmt, chan_num, afmt_tmp, vfmt_tmp, scrambled_flag, major_chan_num, minor_chan_num, source_id;
-	int src, srv_dbid, satpara_dbid;
-	char name[(AM_SI_MAX_SRV_NAME_LEN+4)*AM_SI_MAX_SRV_NAME_LANG + 1];
-	char str_apids[256];
-	char str_afmts[256];
-	char str_alangs[256];
-	char str_atypes[256];
-	char *default_text_lang;
-	char *text_langs;
-	AM_SI_AudioInfo_t aud_info;
-	AM_SI_SubtitleInfo_t sub_info;
-	AM_SI_TeletextInfo_t ttx_info;
-	int sdt_version;
-}AM_SI_ServiceInfo_t;
 
 /****************************************************************************
  * Function prototypes  
@@ -458,20 +432,7 @@ extern AM_ErrorCode_t AM_SI_GetDVBTextCodingAndData(char *in, int in_len, char *
  * \return Error code
  */
 extern AM_ErrorCode_t AM_SI_ConvertToUTF8(char *in, int in_len, char *out, int out_len, char *coding);
-/**\brief get service info from sdt
- * \param [in] sdt
- * \param [out] SI_ServiceInfo_t
- * \retval AM_SUCCESS On success
- * \return Error code
- */
-AM_ErrorCode_t AM_SI_ExtractServiceInfoFromSDT(dvbpsi_sdt_t *sdts, AM_SI_ServiceInfo_t *srv_info);
-/**\brief get service info from vcinfo
- * \param [in] vct_channel_t
- * \param [out] SI_ServiceInfo_t
- * \retval AM_SUCCESS On success
- * \return Error code
- */
-AM_ErrorCode_t AM_SI_ExtractServiceInfoFromVC(dvbpsi_atsc_vct_channel_t *vcinfo, AM_SI_ServiceInfo_t *srv_info);
+
 
 #ifdef __cplusplus
 }
