@@ -43,6 +43,28 @@ enum AM_CC_ErrorCode
 	AM_CC_ERR_END
 };
 
+/**\brief caption mode*/
+typedef enum
+{
+	AM_CC_CAPTION_DEFAULT,
+	/*NTSC CC channels*/
+	AM_CC_CAPTION_CC1,
+	AM_CC_CAPTION_CC2,
+	AM_CC_CAPTION_CC3,
+	AM_CC_CAPTION_CC4,
+	AM_CC_CAPTION_TEXT1,
+	AM_CC_CAPTION_TEXT2,
+	AM_CC_CAPTION_TEXT3,
+	AM_CC_CAPTION_TEXT4,
+	/*DTVCC services*/
+	AM_CC_CAPTION_SERVICE1,
+	AM_CC_CAPTION_SERVICE2,
+	AM_CC_CAPTION_SERVICE3,
+	AM_CC_CAPTION_SERVICE4,
+	AM_CC_CAPTION_SERVICE5,
+	AM_CC_CAPTION_SERVICE6,
+	AM_CC_CAPTION_MAX
+}AM_CC_CaptionMode_t;
 
 /****************************************************************************
  * Type definitions
@@ -62,6 +84,9 @@ typedef void (*AM_CC_VBIProgInfoCb_t)(AM_CC_Handle_t handle, vbi_program_info *p
 typedef void (*AM_CC_VBINetworkCb_t)(AM_CC_Handle_t handle, vbi_network *n);
 typedef void (*AM_CC_VBIRatingCb_t)(AM_CC_Handle_t handle, vbi_rating *rating);
 typedef void (*AM_CC_VBINoDataCb_t) (AM_CC_Handle_t handle);
+typedef void (*AM_CC_DTVCCNoDataCb_t) (AM_CC_Handle_t handle);
+/**CC channel num callback.*/
+typedef void (*AM_CC_ChannumCb_t)(AM_CC_Handle_t handle, AM_CC_CaptionMode_t chn);
 
 
 typedef enum {
@@ -106,28 +131,6 @@ typedef enum {
     CMD_CC_MAX
 } AM_CLOSECAPTION_cmd_t;
 
-/**\brief caption mode*/
-typedef enum
-{
-	AM_CC_CAPTION_DEFAULT,
-	/*NTSC CC channels*/
-	AM_CC_CAPTION_CC1,
-	AM_CC_CAPTION_CC2,
-	AM_CC_CAPTION_CC3,
-	AM_CC_CAPTION_CC4,
-	AM_CC_CAPTION_TEXT1,
-	AM_CC_CAPTION_TEXT2,
-	AM_CC_CAPTION_TEXT3,
-	AM_CC_CAPTION_TEXT4,
-	/*DTVCC services*/
-	AM_CC_CAPTION_SERVICE1,
-	AM_CC_CAPTION_SERVICE2,
-	AM_CC_CAPTION_SERVICE3,
-	AM_CC_CAPTION_SERVICE4,
-	AM_CC_CAPTION_SERVICE5,
-	AM_CC_CAPTION_SERVICE6,
-	AM_CC_CAPTION_MAX
-}AM_CC_CaptionMode_t;
 
 /**\brief Font size, see details in CEA-708**/
 typedef enum
@@ -206,17 +209,20 @@ typedef enum {
 /**\brief Close caption parser's create parameters*/
 typedef struct
 {
-	AM_CC_DrawBegin_t   draw_begin;    /**< Drawing beginning callback*/
-	AM_CC_DrawEnd_t     draw_end;      /**< Drawing end callback*/
 	uint8_t            *bmp_buffer;    /**< Drawing buffer*/
 	int                 pitch;         /**< Line pitch of the drawing buffer*/
 	int                 bypass_cc_enable; /**< Bypass CC data flag*/
+	int dtvcc_time_out;               /**< Dtvcc timeout value in ms*/
 	void               *user_data;     /**< User defined data*/
 	AM_CC_Input_t       input;         /**< Input type.*/
 	AM_CC_VBIProgInfoCb_t pinfo_cb;    /**< VBI program information callback.*/
 	AM_CC_VBINetworkCb_t  network_cb;  /**< VBI network callback.*/
 	AM_CC_VBIRatingCb_t	rating_cb;		/**< VBI rating callback.*/
 	AM_CC_VBINoDataCb_t	nodata_cb;		/**< VBI No Line_284 data callback.*/
+	AM_CC_DTVCCNoDataCb_t dtvcc_nodata_cb; /** < DTVCC no data timeout callback */
+	AM_CC_DrawBegin_t   draw_begin;    /**< Drawing beginning callback*/
+	AM_CC_DrawEnd_t     draw_end;      /**< Drawing end callback*/
+	AM_CC_ChannumCb_t	channel_cb;	   /**< CC channel number callback.*/
 }AM_CC_CreatePara_t;
 
 /**\brief Close caption parser start parameter*/
