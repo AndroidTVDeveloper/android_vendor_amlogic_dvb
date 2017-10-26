@@ -1255,6 +1255,7 @@ static AV_InjectData_t* aml_create_inject_data(void)
 	inj->vid_id = -1;
 	inj->cntl_fd = -1;
 	inj->adec = NULL;
+	inj->ad = NULL;
 
 	return inj;
 }
