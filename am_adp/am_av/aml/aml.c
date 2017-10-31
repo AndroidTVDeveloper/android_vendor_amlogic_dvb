@@ -4338,8 +4338,7 @@ static void* aml_av_monitor_thread(void *arg)
 #endif
 
 		//check video frame available
-
-		if (has_video) {
+		if (has_video && !no_video_data) {
 			if (AM_FileRead(VIDEO_NEW_FRAME_TOGGLED_FILE, buf, sizeof(buf)) >= 0) {
 				sscanf(buf, "%i", &vframes_now);
 
@@ -4383,6 +4382,7 @@ static void* aml_av_monitor_thread(void *arg)
 		if (has_video && (dmx_vpts_stop_dur > NO_DATA_CHECK_TIME) && (vpts_stop_dur > NO_DATA_CHECK_TIME)) {
 			AM_Bool_t sf[2];
 			no_video_data = AM_TRUE;
+			no_video = AM_TRUE;
 			AM_DEBUG(1, "video data stopped");
 			if (vbuf_level_empty_dur > SCRAMBLE_CHECK_TIME) {
 				AM_DMX_GetScrambleStatus(0, sf);
