@@ -3907,6 +3907,10 @@ static void* aml_av_monitor_thread(void *arg)
 
 	unsigned int vframes_now = 0, vframes_last = 0;
 
+	int mChange_audio_flag = -1;
+	//int mCur_audio_digital_raw_value = 0;
+	int is_dts_dolby = 0;
+
 #ifndef ENABLE_PCR
 	if (!show_first_frame_nosync()) {
 		property_set("sys.amplayer.drop_pcm", "1");
@@ -3920,7 +3924,11 @@ static void* aml_av_monitor_thread(void *arg)
 	AM_FileEcho(VDEC_H264_FATAL_ERROR_RESET_FILE, "1");
 
 	pthread_mutex_lock(&gAVMonLock);
-
+	if (dev->ts_player.play_para.afmt == AFORMAT_AC3 ||
+		dev->ts_player.play_para.afmt == AFORMAT_DTS ||
+		dev->ts_player.play_para.afmt == AFORMAT_EAC3) {
+		is_dts_dolby = 1;
+	}
 	while (dev->ts_player.av_thread_running) {
 		ts = (AV_TSData_t *)dev->ts_player.drv_data;
 
@@ -3932,6 +3940,14 @@ static void* aml_av_monitor_thread(void *arg)
 		pthread_cond_timedwait(&gAVMonCond, &gAVMonLock, &rt);
 		if (! dev->ts_player.av_thread_running)
 			break;
+		if (is_dts_dolby == 1) {
+			if (mChange_audio_flag == -1) {
+				mChange_audio_flag = aml_get_audio_digital_raw();
+			} else if (mChange_audio_flag != aml_get_audio_digital_raw()) {
+				mChange_audio_flag = aml_get_audio_digital_raw();
+				dev->audio_switch = AM_TRUE;
+			}
+		}
 		//switch audio pid or fmt
 		if (dev->audio_switch == AM_TRUE)
 		{
