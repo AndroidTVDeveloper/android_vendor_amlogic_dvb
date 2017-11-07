@@ -43,6 +43,7 @@
 #include <am_fend.h>
 #include <am_time.h>
 #include <am_mem.h>
+#include <am_cond.h>
 
 #include "../am_adp_internal.h"
 

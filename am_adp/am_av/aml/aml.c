@@ -46,6 +46,7 @@
 #include <amports/amstream.h>
 #include <cutils/properties.h>
 #include "am_ad.h"
+#include <am_cond.h>
 
 #ifdef ANDROID
 #include <cutils/properties.h>
