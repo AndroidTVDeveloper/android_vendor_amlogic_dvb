@@ -615,7 +615,7 @@ final:
  *   - AM_SUCCESS 成功
  *   - 其他值 错误代码(见am_fend.h)
  */
-AM_ErrorCode_t AM_FEND_Close(int dev_no)
+AM_ErrorCode_t AM_FEND_CloseEx(int dev_no, AM_Bool_t reset)
 {
 	AM_FEND_Device_t *dev;
 	
@@ -637,7 +637,7 @@ AM_ErrorCode_t AM_FEND_Close(int dev_no)
 		/*Release the device*/
 		if(dev->drv->close)
 		{
-			if (dev->drv->set_mode)
+			if (reset && dev->drv->set_mode)
 				dev->drv->set_mode(dev, FE_UNKNOWN);
 
 			dev->drv->close(dev);
@@ -651,6 +651,10 @@ AM_ErrorCode_t AM_FEND_Close(int dev_no)
 	pthread_mutex_unlock(&am_gAdpLock);
 	
 	return AM_SUCCESS;
+}
+AM_ErrorCode_t AM_FEND_Close(int dev_no)
+{
+	return AM_FEND_CloseEx(dev_no, AM_TRUE);
 }
 
 /**\brief 设定前端解调模式

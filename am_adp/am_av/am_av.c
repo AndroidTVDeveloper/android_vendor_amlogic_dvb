@@ -2842,6 +2842,29 @@ AM_ErrorCode_t AM_AV_GetTimeshiftInfo(int dev_no, AM_AV_TimeshiftInfo_t *info)
 	return ret;
 }
 
+AM_ErrorCode_t AM_AV_GetTimeshiftTFile(int dev_no, AM_TFile_t *tfile)
+{
+	AM_AV_Device_t *dev;
+	AM_ErrorCode_t ret = AM_SUCCESS;
+	AV_TSPlayPara_t para;
+
+	AM_TRY(av_get_openned_dev(dev_no, &dev));
+
+	pthread_mutex_lock(&dev->lock);
+
+	if (ret == AM_SUCCESS)
+	{
+		if (dev->drv->timeshift_get_tfile)
+		{
+			ret = dev->drv->timeshift_get_tfile(dev, tfile);
+		}
+	}
+
+	pthread_mutex_unlock(&dev->lock);
+
+	return ret;
+}
+
 /**\brief 设置视频通道参数
  * \param dev_no 音视频设备号
  * \param fs free scale参数

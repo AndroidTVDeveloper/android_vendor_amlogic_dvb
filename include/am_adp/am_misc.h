@@ -14,7 +14,7 @@
  * Description:
  */
 /**\file
- * \brief 一些常用辅助函数
+ * \brief Misc tools
  *
  * \author Gong Ke <ke.gong@amlogic.com>
  * \date 2010-08-05: create the document
@@ -38,7 +38,6 @@ extern "C"
 /****************************************************************************
  * Type definitions
  ***************************************************************************/
-
 
 /****************************************************************************
  * API function prototypes  
@@ -116,4 +115,5 @@ extern AM_ErrorCode_t AM_Check_UTF8(const char *src, int src_len, char *dest, in
 #endif
 
 #endif
+
 

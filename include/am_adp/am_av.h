@@ -35,6 +35,8 @@
 #include "am_types.h"
 #include "am_osd.h"
 #include "am_evt.h"
+#include "am_misc.h"
+#include "am_tfile.h"
 #include <amports/vformat.h>
 #include <amports/aformat.h>
 
@@ -460,6 +462,10 @@ typedef struct
 	
 	AM_AV_TimeshiftMode_t mode;   /**< Playing mode*/
 	AM_AV_TimeshiftMediaInfo_t media_info; /**< Media information*/
+
+	AM_TFile_t tfile;
+	int offset_ms;
+	AM_Bool_t start_paused;
 } AM_AV_TimeshiftPara_t;
 
 /**\brief Timeshift lpaying information*/
@@ -1078,6 +1084,14 @@ extern AM_ErrorCode_t AM_AV_SwitchTimeshiftAudio(int dev_no, int apid, int afmt)
  * \return Error code
  */
 extern AM_ErrorCode_t AM_AV_GetTimeshiftInfo(int dev_no, AM_AV_TimeshiftInfo_t *info);
+
+/**\brief Get the current timeshifting play information
+ * \param dev_no AV decoder device number
+ * \param [out] tfile the tfile used for timeshift
+ * \retval AM_SUCCESS On success
+ * \return Error code
+ */
+extern AM_ErrorCode_t AM_AV_GetTimeshiftTFile(int dev_no, AM_TFile_t *tfile);
 
 /**\cond */
 /**\brief Set video path parameters
