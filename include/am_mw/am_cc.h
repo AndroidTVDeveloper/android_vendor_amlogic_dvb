@@ -88,6 +88,8 @@ typedef void (*AM_CC_VBIRatingCb_t)(AM_CC_Handle_t handle, vbi_rating *rating);
 /**CC data callback.*/
 typedef void (*AM_CC_DataCb_t)(AM_CC_Handle_t handle, int mask);
 
+typedef void (*AM_CC_UpdataJson_t)(AM_CC_Handle_t handle);
+
 typedef enum {
     CC_STATE_RUNNING      = 0x1001,
     CC_STATE_STOP                 ,
@@ -221,6 +223,8 @@ typedef struct
 	AM_CC_DataCb_t      data_cb;       /**< Received data callback.*/
 	AM_CC_DrawBegin_t   draw_begin;    /**< Drawing beginning callback*/
 	AM_CC_DrawEnd_t     draw_end;      /**< Drawing end callback*/
+	AM_CC_UpdataJson_t json_update;
+	char *json_buffer;
 }AM_CC_CreatePara_t;
 
 /**\brief Close caption parser start parameter*/
