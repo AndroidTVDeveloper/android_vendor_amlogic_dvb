@@ -48,6 +48,8 @@ LOCAL_SRC_FILES := am_dmx/am_dmx.c am_dmx/linux_dvb/linux_dvb.c\
 		   am_open_lib/libdvbsi/tables/atsc_mgt.c\
 		   am_open_lib/libdvbsi/tables/atsc_stt.c\
 		   am_open_lib/libdvbsi/tables/atsc_vct.c\
+		   am_open_lib/libdvbsi/tables/atsc_cea.c\
+		   am_open_lib/libdvbsi/tables/huffman_decode.c\
 		   am_open_lib/libdvbsi/demux.c\
 		   am_open_lib/libdvbsi/descriptors/dr_0f.c\
 		   am_open_lib/libdvbsi/descriptors/dr_44.c\
@@ -187,6 +189,8 @@ LOCAL_SRC_FILES := am_dmx/am_dmx.c am_dmx/linux_dvb/linux_dvb.c\
 		   am_open_lib/libdvbsi/tables/atsc_mgt.c\
 		   am_open_lib/libdvbsi/tables/atsc_stt.c\
 		   am_open_lib/libdvbsi/tables/atsc_vct.c\
+		   am_open_lib/libdvbsi/tables/atsc_cea.c\
+		   am_open_lib/libdvbsi/tables/huffman_decode.c\
 		   am_open_lib/libdvbsi/demux.c\
 		   am_open_lib/libdvbsi/descriptors/dr_0f.c\
 		   am_open_lib/libdvbsi/descriptors/dr_44.c\

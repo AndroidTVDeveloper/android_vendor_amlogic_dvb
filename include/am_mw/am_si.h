@@ -36,6 +36,7 @@
 #include "libdvbsi/tables/atsc_stt.h"
 #include "libdvbsi/tables/atsc_eit.h"
 #include "libdvbsi/tables/atsc_ett.h"
+#include "libdvbsi/tables/atsc_cea.h"
 
 #include "atsc/atsc_descriptor.h"
 #include "atsc/atsc_rrt.h"
@@ -94,6 +95,7 @@ extern "C"
 #define AM_SI_TID_PSIP_STT			ATSC_PSIP_STT_TID
 #define AM_SI_TID_PSIP_DCCT			ATSC_PSIP_DCCT_TID
 #define AM_SI_TID_PSIP_DCCSCT		ATSC_PSIP_DCCSCT_TID
+#define AM_SI_TID_PSIP_CEA			ATSC_PSIP_CEA_TID
 
 /**\brief descriptor tag define*/
 /**\brief ISO/IEC 13818-1*/
