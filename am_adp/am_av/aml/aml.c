@@ -3518,30 +3518,33 @@ static void* aml_av_monitor_thread(void *arg)
 		}
 
 		AM_TIME_GetClock(&now);
-
-		if (ioctl(ts->fd, AMSTREAM_IOC_AB_STATUS, (unsigned long)&astatus) != -1) {
-			abuf_size  = astatus.status.size;
-			abuf_level = astatus.status.data_len;
-			abuf_read_ptr = astatus.status.read_pointer;
-		} else {
-			//AM_DEBUG(1, "cannot get audio buffer status");
-			abuf_size  = 0;
-			abuf_level = 0;
-			abuf_read_ptr = 0;
+		if (has_audio)
+		{
+			if (ioctl(ts->fd, AMSTREAM_IOC_AB_STATUS, (unsigned long)&astatus) != -1) {
+				abuf_size  = astatus.status.size;
+				abuf_level = astatus.status.data_len;
+				abuf_read_ptr = astatus.status.read_pointer;
+			} else {
+				//AM_DEBUG(1, "cannot get audio buffer status");
+				abuf_size  = 0;
+				abuf_level = 0;
+				abuf_read_ptr = 0;
+			}
 		}
-
-		if (ioctl(ts->fd, AMSTREAM_IOC_VB_STATUS, (unsigned long)&vstatus) != -1) {
-			vbuf_size  = vstatus.status.size;
-			vbuf_level = vstatus.status.data_len;
-			vbuf_read_ptr = vstatus.status.read_pointer;
-			//is_hd_video = vstatus.vstatus.width > 720;
-		} else {
-			//AM_DEBUG(1, "cannot get video buffer status");
-			vbuf_size  = 0;
-			vbuf_level = 0;
-			vbuf_read_ptr = 0;
+		if (has_video)
+		{
+			if (ioctl(ts->fd, AMSTREAM_IOC_VB_STATUS, (unsigned long)&vstatus) != -1) {
+				vbuf_size  = vstatus.status.size;
+				vbuf_level = vstatus.status.data_len;
+				vbuf_read_ptr = vstatus.status.read_pointer;
+				//is_hd_video = vstatus.vstatus.width > 720;
+			} else {
+				//AM_DEBUG(1, "cannot get video buffer status");
+				vbuf_size  = 0;
+				vbuf_level = 0;
+				vbuf_read_ptr = 0;
+			}
 		}
-
 		if (vbuf_level == 0) {
 			if(!vbuf_level_empty_time)
 				vbuf_level_empty_time = now;
@@ -3577,18 +3580,20 @@ static void* aml_av_monitor_thread(void *arg)
 			vrp_stop_dur  = 0;
 		}
 		last_vbuf_read_ptr = vbuf_read_ptr;
-
-		memset(&vstatus, 0, sizeof(vstatus));
-		if (ioctl(ts->fd, AMSTREAM_IOC_VDECSTAT, (unsigned long)&vstatus) != -1) {
-			is_hd_video = (vstatus.vstatus.width > 720)? 1 : 0;
-			vdec_status = vstatus.vstatus.status;
-			frame_width = vstatus.vstatus.width;
-			frame_height= vstatus.vstatus.height;
-			//AM_DEBUG(1, "vdec width %d height %d status 0x%08x", frame_width, frame_height, vdec_status);
-		} else {
-			vdec_status = 0;
-			frame_width = 0;
-			frame_height= 0;
+		if (has_video)
+		{
+			memset(&vstatus, 0, sizeof(vstatus));
+			if (ioctl(ts->fd, AMSTREAM_IOC_VDECSTAT, (unsigned long)&vstatus) != -1) {
+				is_hd_video = (vstatus.vstatus.width > 720)? 1 : 0;
+				vdec_status = vstatus.vstatus.status;
+				frame_width = vstatus.vstatus.width;
+				frame_height= vstatus.vstatus.height;
+				//AM_DEBUG(1, "vdec width %d height %d status 0x%08x", frame_width, frame_height, vdec_status);
+			} else {
+				vdec_status = 0;
+				frame_width = 0;
+				frame_height= 0;
+			}
 		}
 		if (AM_FileRead(AVS_PLUS_DECT_FILE, buf, sizeof(buf)) >= 0) {
 			sscanf(buf, "%d", &avs_fmt);
@@ -4839,6 +4844,13 @@ static AM_ErrorCode_t aml_get_astatus(AM_AV_Device_t *dev, AM_AV_AudioStatus_t *
 	char buf[32];
 
 	void *adec = NULL;
+	AM_Bool_t has_audio = VALID_AUDIO(dev->ts_player.play_para.apid, dev->ts_player.play_para.afmt);
+
+	if (!has_audio)
+	{
+		AM_DEBUG(1,"there is no audio pid data ,pls check your parameters");
+		return AM_FAILURE;
+	}
 
 	pthread_mutex_lock(&gAVMonLock);
 
@@ -4999,6 +5011,13 @@ static AM_ErrorCode_t aml_get_vstatus(AM_AV_Device_t *dev, AM_AV_VideoStatus_t *
 	struct am_io_param vstatus;
 	char buf[32];
 	int fd, rc;
+	AM_Bool_t has_video = VALID_VIDEO(dev->ts_player.play_para.vpid, dev->ts_player.play_para.vfmt);
+
+	if (!has_video)
+	{
+	//	AM_DEBUG(1, "has no video pid data pls check your parameters");
+		return AM_FAILURE;
+	}
 
 	pthread_mutex_lock(&gAVMonLock);
 	fd = get_amstream(dev);
