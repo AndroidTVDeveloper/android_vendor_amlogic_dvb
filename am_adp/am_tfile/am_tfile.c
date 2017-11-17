@@ -939,8 +939,9 @@ int AM_TFile_TimeStart(AM_TFile_t tfile)
 	return aml_tfile_attach_timer(tfile);
 }
 
-//one node for guard time
-#define get_list_start(_ptimer_) ((_ptimer_)->wrap? (_ptimer_)->list.next : &(_ptimer_)->list)
+//one node for guard time //need more research, fatal exists
+//#define get_list_start(_ptimer_) ((_ptimer_)->wrap? (_ptimer_)->list.next : &(_ptimer_)->list)
+#define get_list_start(_ptimer_)  (&(_ptimer_)->list)
 
 
 int AM_TFile_TimeSeek(AM_TFile_t tfile, int offset_ms/*offset from time start*/)
