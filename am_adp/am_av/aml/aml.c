@@ -3962,7 +3962,8 @@ static void* aml_av_monitor_thread(void *arg)
 			}
 		}
 
-		if (has_video && (dmx_vpts_stop_dur > NO_DATA_CHECK_TIME) && (vpts_stop_dur > NO_DATA_CHECK_TIME)) {
+		if (has_video && !no_video_data
+			&& (dmx_vpts_stop_dur > NO_DATA_CHECK_TIME) && (vpts_stop_dur > NO_DATA_CHECK_TIME)) {
 			AM_Bool_t sf[2];
 			no_video_data = AM_TRUE;
 			no_video = AM_TRUE;
