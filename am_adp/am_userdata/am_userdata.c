@@ -233,7 +233,7 @@ static void read_unused_data(AM_USERDATA_RingBuffer_t *ringbuf, size_t len)
 	
 	if (buf != NULL)
 	{
-		AM_DEBUG(1, "read %d bytes unused data", len);
+		//AM_DEBUG(1, "read %d bytes unused data", len);
 		userdata_ring_buf_read(ringbuf, buf, len);
 		free(buf);
 	}
@@ -247,7 +247,7 @@ static int userdata_package_write(AM_USERDATA_Device_t *dev, const uint8_t *buf,
 	cnt = userdata_ring_buf_free(&dev->pkg_buf);
 	if (cnt < (int)(size+sizeof(cnt)))
 	{
-		AM_DEBUG(1, "write userdata error: data size to large, %d > %d", size+sizeof(cnt), cnt);
+		//AM_DEBUG(1, "write userdata error: data size to large, %d > %d", size+sizeof(cnt), cnt);
 		ret = 0;
 	}
 	else
@@ -259,7 +259,7 @@ static int userdata_package_write(AM_USERDATA_Device_t *dev, const uint8_t *buf,
 	}
 	pthread_mutex_unlock(&dev->lock);
 	
-	AM_DEBUG(3, "write %d bytes\n", ret);
+	//AM_DEBUG(3, "write %d bytes\n", ret);
 	dump_user_data(buf, size);
 	return ret;
 }
@@ -277,7 +277,7 @@ static int userdata_package_read(AM_USERDATA_Device_t *dev, uint8_t *buf, int si
 		if (cnt < ud_cnt)
 		{
 			/* this case must not happen */
-			AM_DEBUG(0, "read userdata error: expect %d bytes, but only %d bytes avail", ud_cnt, cnt);
+			//AM_DEBUG(0, "read userdata error: expect %d bytes, but only %d bytes avail", ud_cnt, cnt);
 			cnt = 0;
 			read_unused_data(&dev->pkg_buf, cnt);
 		}
@@ -286,7 +286,7 @@ static int userdata_package_read(AM_USERDATA_Device_t *dev, uint8_t *buf, int si
 			cnt = 0;
 			if (ud_cnt > size)
 			{
-				AM_DEBUG(0, "read userdata error: source buffer not enough, bufsize %d , datasize %d", size, ud_cnt);
+				//AM_DEBUG(0, "read userdata error: source buffer not enough, bufsize %d , datasize %d", size, ud_cnt);
 				read_unused_data(&dev->pkg_buf, ud_cnt);
 			}
 			else if (ud_cnt > 0)
@@ -298,7 +298,7 @@ static int userdata_package_read(AM_USERDATA_Device_t *dev, uint8_t *buf, int si
 	}
 	else
 	{
-		AM_DEBUG(0, "read userdata error: count = %d < 4", cnt);
+		//AM_DEBUG(0, "read userdata error: count = %d < 4", cnt);
 		cnt = 0;
 		read_unused_data(&dev->pkg_buf, cnt);
 	}
