@@ -106,7 +106,7 @@ typedef struct
 	dvbpsi_pat_program_t program;   /**< Program information*/
 	AM_REC_MediaInfo_t media_info;  /**< Media information*/
 	int total_time;			/**< Total duration time in seconds, <=0 means recoding will stopped manually*/
-	int total_size;                 /**< Max size, <=0 means no limit*/
+	int64_t total_size;                 /**< Max size, <=0 means no limit*/
 	char prefix_name[AM_REC_NAME_MAX];    /**< Filename prefix*/
 	char suffix_name[AM_REC_SUFFIX_MAX];  /**< Filename suffix*/
 }AM_REC_RecPara_t;
