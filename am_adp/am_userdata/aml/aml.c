@@ -328,8 +328,9 @@ static int aml_process_mpeg_userdata(AM_USERDATA_Device_t *dev, uint8_t *data, i
 			ref   = (v >> 16) & 0x3f;
 			ptype = (v >> 26) & 7;
 
-			AM_DEBUG(0, "CC header: %02x %02x %02x %02x %02x %02x %02x %02x",
+			/*AM_DEBUG(0, "CC header: %02x %02x %02x %02x %02x %02x %02x %02x",
 				pd[0], pd[1], pd[2], pd[3], pd[4], pd[5], pd[6], pd[7]);
+				*/
 			pd   += sizeof(aml_ud_header_t);
 			left -= sizeof(aml_ud_header_t);
 
