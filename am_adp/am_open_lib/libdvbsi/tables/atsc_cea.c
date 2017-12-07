@@ -350,6 +350,7 @@ static void dvbpsi_atsc_CEAPaserMulti(dvbpsi_atsc_cea_t* p_cea,
     uint8_t *p_byte =  buf;
     uint8_t multi_text_len = p_byte[0];
     uint8_t i = 0;
+    /*skip number_strings*/
     p_byte = p_byte + 1;
     for (i = 0;
         i < multi_text_len;
@@ -467,16 +468,16 @@ void dvbpsi_atsc_DecodeCEASections(dvbpsi_atsc_cea_t* p_cea,
     memset(i_eas_event_code, 0, 256);
     /*parse eas info and protocol version*/
     p_byte = p_section->p_payload_start;
-    i_protocol_version = p_byte[1];
+    i_protocol_version = p_byte[0];
     AM_DEBUG(1, "CEA decode cea section info i_protocol_version %d", i_protocol_version);
-    i_eas_event_id = (uint16_t)(p_byte[2] << 8) | ((uint16_t) p_byte[3]);
+    i_eas_event_id = (uint16_t)(p_byte[1] << 8) | ((uint16_t) p_byte[2]);
     i_eas_orig_code[0] = (uint8_t) p_byte[3];
-    i_eas_orig_code[0] = (uint8_t) p_byte[4];
-    i_eas_orig_code[0] = (uint8_t) p_byte[5];
+    i_eas_orig_code[1] = (uint8_t) p_byte[4];
+    i_eas_orig_code[2] = (uint8_t) p_byte[5];
     i_eas_event_code_len = (uint8_t) p_byte[6];
-    p_byte = p_section->p_payload_start + 7;
-    //if (i_eas_event_code_len > 0) {
-      memcpy(i_eas_event_code, p_byte, i_eas_event_code_len);
+    p_byte = p_section->p_payload_start + 6;
+    if (i_eas_event_code_len > 0) {
+      memcpy(i_eas_event_code, p_byte + 1, i_eas_event_code_len);
       dvbpsi_atsc_setEasCEA(p_cea,
                              i_protocol_version,
                              i_eas_event_id,
@@ -485,8 +486,9 @@ void dvbpsi_atsc_DecodeCEASections(dvbpsi_atsc_cea_t* p_cea,
                              i_eas_event_code
                               );
       p_byte = p_byte + i_eas_event_code_len;
-    //}
+    }
     /*parse nature text multi info*/
+    p_byte = p_byte + 1;
     uint8_t nature_text_len = p_byte[0];
     p_byte = p_byte + 1;
     dvbpsi_atsc_CEAPaserMulti(p_cea, AM_EAS_MULTI_NATURE, nature_text_len, p_byte);
@@ -510,7 +512,7 @@ void dvbpsi_atsc_DecodeCEASections(dvbpsi_atsc_cea_t* p_cea,
                        (uint16_t) p_byte[6];
     /*p_byte[7] reserved*/
     i_alert_priority = (uint8_t) p_byte[8] & 0x0f;
-    p_byte = p_byte + 9;
+    p_byte = p_byte + 9;/*details_OOB_source_ID*/
     i_details_OOB_source_ID = (uint16_t)(p_byte[0] << 8) |
                               (uint16_t) p_byte[1];
     /* 111111** ******** 10 bit */
@@ -531,10 +533,10 @@ void dvbpsi_atsc_DecodeCEASections(dvbpsi_atsc_cea_t* p_cea,
                            i_details_minor_channel_number,
                            i_audio_OOB_source_ID
                             );
-    p_byte = p_byte + 8;
+    p_byte = p_byte + 8;/*alert_text_len*/
     /*parse nature text multi info*/
-    uint8_t alert_text_len = p_byte[0];
-    p_byte = p_byte + 1;
+    uint8_t alert_text_len = p_byte[0] << 8 | p_byte[1];
+    p_byte = p_byte + 2;
     if (alert_text_len > 0) {
       dvbpsi_atsc_CEAPaserMulti(p_cea, AM_EAS_MULTI_ALERT, alert_text_len, p_byte);
       p_byte = p_byte + alert_text_len;
