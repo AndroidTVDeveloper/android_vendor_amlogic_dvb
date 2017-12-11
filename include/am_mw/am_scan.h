@@ -110,12 +110,6 @@ typedef enum
 	AM_SCAN_DTV_STD_MAX,
 }AM_SCAN_DTVStandard_t;
 
-/**\brief scan check scramb mode*/
-enum AM_SCAN_ScrambleMode
-{
-	AM_SCAN_CHECK_SCRAMBLE_CADES	= 0,	/**< check ca des mode*/
-	AM_SCAN_CHECK_SCRAMBLE_TSHEAD	= 1,	/**< manual scan mode*/
-};
 
 /**\brief TV scan mode*/
 enum AM_SCAN_Mode
@@ -141,6 +135,7 @@ enum AM_SCAN_DTVMode
 	AM_SCAN_DTVMODE_NORADIO			= 0x80, /**< Donot store radio programs*/
 	AM_SCAN_DTVMODE_ISDBT_ONESEG	= 0x100, /**< Scan ISDBT oneseg in layer A*/
 	AM_SCAN_DTVMODE_ISDBT_FULLSEG	= 0x200, /**< Scan ISDBT fullseg*/
+	AM_SCAN_DTVMODE_SCRAMB_TSHEAD	= 0x400, /**< is check scramb by ts head*/
 };
 
 /**\brief ATVscan mode*/
@@ -375,7 +370,6 @@ struct AM_SCAN_CreatePara_s
 	AM_SCAN_ATVCreatePara_t atv_para;	/**< ATV scan parameters*/
 	AM_SCAN_DTVCreatePara_t dtv_para;	/**< DTV scan parameters*/
 	int proc_mode;	/**< see AM_SCAN_PROCMode*/
-	int check_scramble_mode; /*0:ca des, 1: dvr ts, check ts head scramble*/
 };
 /**\brief scan new program parameters*/
 typedef struct AM_SCAN_NewProgram_Data_s {

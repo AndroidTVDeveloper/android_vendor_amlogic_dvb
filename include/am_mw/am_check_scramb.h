@@ -27,7 +27,6 @@ extern "C"
 extern AM_ErrorCode_t AM_Check_Scramb_Start(int dvr_dev, int fifo_id, int dmx_dev, int dmx_src);
 extern AM_ErrorCode_t AM_Check_Scramb_Stop(void);
 extern AM_ErrorCode_t AM_Check_Scramb_GetPid(int *pids);
-
 #ifdef __cplusplus
 }
 #endif
