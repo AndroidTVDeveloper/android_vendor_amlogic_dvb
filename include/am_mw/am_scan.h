@@ -136,6 +136,7 @@ enum AM_SCAN_DTVMode
 	AM_SCAN_DTVMODE_ISDBT_ONESEG	= 0x100, /**< Scan ISDBT oneseg in layer A*/
 	AM_SCAN_DTVMODE_ISDBT_FULLSEG	= 0x200, /**< Scan ISDBT fullseg*/
 	AM_SCAN_DTVMODE_SCRAMB_TSHEAD	= 0x400, /**< is check scramb by ts head*/
+	AM_SCAN_DTVMODE_NOVCT			= 0x800, /**< Donot store in vct but not in pmt programs*/
 };
 
 /**\brief ATVscan mode*/
